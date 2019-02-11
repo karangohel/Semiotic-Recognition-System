@@ -1,0 +1,192 @@
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>tracking.js - color with camera</title>
+    <script src="build/tracking-min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/project.css">
+    <link rel="stylesheet" type="text/css" href="css/owl.carousel.css">
+<style type="text/css">
+.owl-carousel{
+    height: 400px;
+}
+.owl-carousel div{
+    width:100%;
+    height: 100%;
+}
+.three{
+    width: 33.33%;
+    height: 100%;
+    border: 1px solid #000;
+}
+</style>
+</head>
+
+<body>
+    <div class="fx bottom">1</div>
+    <div class="fx top">1</div>
+    <div class="fx left">1</div>
+    <div class="fx right">1</div>
+    <div class="fixed magenta">
+        1
+
+    </div>
+    <div class="fixed cyan">
+        2
+    </div>
+
+    <div class="demo-frame" id="output_screen">
+        <video autoplay="" class="hidden" controls="" height="480px" id="video"
+        loop="" preload="" width="640px"></video>
+    </div>
+<!-- Set up your HTML -->
+<div class="owl-carousel">
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+  <div
+  > Your Content </div>
+  <div> Your Content </div>
+  <div> Your Content </div>
+</div>
+    <script src="build/jquery-2.1.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="owl.carousel.min.js"></script>
+
+     <script>
+    
+var winh = $(document).height();
+var tf,tb,tt,tl,tr,rx,ry,mx,my,cx,cy;
+ var anchor_array;
+    var winw = $(document).width();
+
+
+    window.onload = function() {
+      var video = document.getElementById('video');
+
+      var tracker = new tracking.ColorTracker(['cyan','magenta']);
+
+      tracking.track('#video', tracker, { camera: true });
+      var ancchor=0;
+      var left=0;
+      var right=0;
+
+      tracker.on('track', function(event) {
+       
+        event.data.forEach(function(rect) {
+
+            rx=winw-(rect.x*2.5);
+
+          if (rect.color === 'cyan') {
+          
+            $(".fixed.cyan").offset({ top: rect.y * 2.5, left: rx});
+            cx=rect.x;
+            cy=rect.y;
+            
+          }
+
+          if(rect.color === 'magenta'){
+            mx=rect.x;
+            my=rect.y;
+
+
+            $(".fixed.magenta").offset({ top: rect.y * 2.5, left: rx});
+
+
+             tb = $(".fx.bottom").offset();
+             tf = $(".fixed.magenta").offset();
+             tt = $(".fx.top").offset();
+             tl = $(".fx.left").offset();
+             tr = $(".fx.right").offset();
+            if(tf.top >= tb.top){
+
+                window.scrollBy(0, 5);
+            }
+
+            if(tf.top <= tt.top){
+
+                window.scrollBy(0, -5);
+            }
+            if(tf.top <= tt.top){
+
+                window.scrollBy(0, -5);
+            }
+            if(tf.left >= tr.left){
+
+                window.scrollBy(5, 0);
+            }
+            if(tf.left <= tl.left){
+
+                window.scrollBy(-5, 0);
+            }
+          }
+
+          if(cx>=mx-10 && cx<=mx+10)
+          {
+                if(cy>=my-10 && cy<=my+10)
+                {
+                   $("a").each(function(){
+                       
+                           var current_a = $(this).offset().top;
+                           var mag = $('.fixed.magenta').offset().top;
+                           current_a =  Math.ceil(current_a);
+                           mag = Math.ceil(mag);
+                           console.log("mag"+ mag)
+                           console.log("current_a" + current_a)
+                            if( mag>= current_a-10 && mag<= current_a+10)
+                            {
+                               
+                                window.location = $(this).attr("href");
+                                //console.log($(this).attr("href"))
+                                $(this).trigger("click");
+
+
+                            }
+
+                        });
+
+               } 
+          }
+    
+    //Caurosal
+
+        if(ancchor>mx)
+        {
+            left++;
+            right=0;
+        }
+        if(ancchor<mx)
+        {
+            right++;
+            left=0;
+        }
+        
+        if (left==10) 
+            {
+                console.log("right");
+                left=0;
+            }
+
+        if (right==10) 
+            {
+                console.log("left");
+                right=0;
+            }
+            ancchor=mx;
+        });
+      });
+
+
+    };
+    $("a").each(function (argument) {
+         console.log( $(this).offset().top)
+    });
+    $(document).ready(function(){
+        
+        $(".owl-carousel").owlCarousel();
+    });
+                 
+    </script>
+</body>
+</html>
